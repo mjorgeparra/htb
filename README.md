@@ -4,7 +4,7 @@ A fully self-contained, offline-ready HTML reference guide for HackTheBox — st
 
 ⚡ Quick Start
 bash# Clone the repo
-git clone https://github.com/yourusername/htb-guide.git
+git clone https://github.com/mjorgeparra/htb-guide.git
 cd htb-guide
 
 # Open in browser — no server required, no dependencies
