@@ -1,9 +1,10 @@
 A fully self-contained, offline-ready HTML reference guide for HackTheBox — structured as a zero-to-hero learning path from absolute beginner through to Advanced Active Directory and binary exploitation.
 → Open the Guide · Screenshots · What's Inside · Who Is This For
+</div>
 
 ⚡ Quick Start
 bash# Clone the repo
-git clone https://github.com/mjorgeparra/htb-guide.git
+git clone https://github.com/yourusername/htb-guide.git
 cd htb-guide
 
 # Open in browser — no server required, no dependencies
@@ -39,17 +40,22 @@ Screenshots
 
 The guide uses an HTB-themed dark UI with green-on-black terminal aesthetics and animated matrix background.
 
-Start Here — Beginner Roadmap
+<details>
+<summary>Start Here — Beginner Roadmap</summary>
 The default landing page shows a 6-week learning plan, environment setup checklist, and 9 common mistakes grid.
-
-Cheatsheet — Port Reference + Command Cards
+</details>
+<details>
+<summary>Cheatsheet — Port Reference + Command Cards</summary>
 24 port cards each with attack vector hints. 12 command card panels — every command is clickable to copy.
-
-Active Directory — ADCS & Delegation
+</details>
+<details>
+<summary>Active Directory — ADCS & Delegation</summary>
 Certipy ESC1/ESC8 chains, Shadow Credentials, unconstrained delegation TGT capture, RBCD full exploit chain.
-
-Buffer Overflow — Stack Memory Diagram
+</details>
+<details>
+<summary>Buffer Overflow — Stack Memory Diagram</summary>
 Visual stack layout before/after overflow, 6-step Windows x86 exploit development, pwntools for Linux x64.
+</details>
 
 Who Is This For
 You are...This guide...Complete beginner, never used LinuxStart at ★ Start Here, follow the 6-week planKnow Linux but new to HTBStart at HTB Overview, then MethodologySolving Easy machines, want structureUse Cheatsheet and Methodology as daily referenceStuck on Medium machinesDeep-dive Web Attacks, PrivEsc, ServicesPreparing for OSCPFocus on Buffer Overflow, Methodology, ReportingPracticing AD attacksWork through the full Active Directory sectionRunning team CTFsCTF 101, Crypto & Stego, OSINT sections
@@ -90,6 +96,8 @@ ResourceURLPurposeGTFOBinsgtfobins.github.ioLinux sudo/SUID/capability abuse ref
 License
 MIT License — see LICENSE for details.
 Free to use, share, and modify. If you build something with it, a star ⭐ is appreciated.
+
+<div align="center">
 hack the planet · legally · from zero to hero · never stop learning
 Built for the HTB community · Not affiliated with HackTheBox
 </div>
