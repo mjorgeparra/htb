@@ -489,7 +489,7 @@ function showResults(){
     fill.style.strokeDashoffset=376*(1-pct/100);
   },100);
 
-  document.getElementById('result-title').textContent=pct>=80?'\uD83C\uDFC6 Excellent':'pct>=60?\uD83D\uDCAA Keep Going!':'\uD83D\uDCDA More Study Needed';
+  document.getElementById('result-title').textContent=pct>=80?'🏆 Excellent':pct>=60?'💪 Keep Going!':'📚 More Study Needed';
   document.getElementById('result-sub').textContent=`${pct}% — ${score}/${qPool.length} correct. Max streak: ${maxStreak}.`;
 
   // session history
