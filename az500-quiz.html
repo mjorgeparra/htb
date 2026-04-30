@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AZ-500 Quiz</title>
+  <style>
+    :root {
+      --azure: #0078d4;
+      --dark: #1a1a2e;
+      --card: #16213e;
+      --accent: #0f3460;
+      --green: #00b386;
+      --red: #e63946;
+      --text: #e0e0e0;
+      --muted: #8899aa;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--dark);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    header h1 {
+      font-size: 2rem;
+      color: var(--azure);
+      letter-spacing: 1px;
+    }
+    header p {
+      color: var(--muted);
+      margin-top: .4rem;
+      font-size: .95rem;
+    }
+    #quiz-container {
+      width: 100%;
+      max-width: 720px;
+    }
+    .progress-bar-wrap {
+      background: var(--accent);
+      border-radius: 99px;
+      height: 8px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--azure);
+      border-radius: 99px;
+      transition: width .4s ease;
+    }
+    .progress-label {
+      text-align: right;
+      font-size: .8rem;
+      color: var(--muted);
+      margin-bottom: .5rem;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--accent);
+      border-radius: 14px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 24px #0003;
+    }
+    .domain-tag {
+      display: inline-block;
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      background: var(--accent);
+      color: var(--azure);
+      border-radius: 6px;
+      padding: 2px 10px;
+      margin-bottom: 1rem;
+    }
+    .question-text {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+    .options { display: flex; flex-direction: column; gap: .75rem; }
+    .option-btn {
+      background: var(--accent);
+      border: 2px solid transparent;
+      color: var(--text);
+      border-radius: 10px;
+      padding: .85rem 1.2rem;
+      font-size: .95rem;
+      cursor: pointer;
+      text-align: left;
+      transition: all .2s;
+    }
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--azure);
+      background: #1a3a5c;
+    }
+    .option-btn.correct {
+      border-color: var(--green);
+      background: #003322;
+      color: #00e0a0;
+    }
+    .option-btn.wrong {
+      border-color: var(--red);
+      background: #2e0a0e;
+      color: #ff6b7a;
+    }
+    .option-btn:disabled { cursor: default; }
+    .feedback {
+      margin-top: 1.2rem;
+      padding: 1rem 1.2rem;
+      border-radius: 10px;
+      font-size: .92rem;
+      line-height: 1.6;
+      display: none;
+    }
+    .feedback.show { display: block; }
+    .feedback.correct-fb { background: #002e1e; border-left: 4px solid var(--green); }
+    .feedback.wrong-fb { background: #2a0a10; border-left: 4px solid var(--red); }
+    .next-btn {
+      margin-top: 1.2rem;
+      background: var(--azure);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: .8rem 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: none;
+      transition: background .2s;
+    }
+    .next-btn:hover { background: #005fa3; }
+    .next-btn.show { display: inline-block; }
+    #results {
+      display: none;
+      text-align: center;
+      width: 100%;
+      max-width: 720px;
+    }
+    #results .card {
+      padding: 3rem 2rem;
+    }
+    .score-circle {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      border: 6px solid var(--azure);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+    }
+    .score-circle span.num { font-size: 2.4rem; font-weight: 700; color: var(--azure); }
+    .score-circle span.denom { font-size: .85rem; color: var(--muted); }
+    #results h2 { font-size: 1.6rem; margin-bottom: .5rem; }
+    #results p { color: var(--muted); margin-bottom: 1.5rem; }
+    .wrong-list { text-align: left; margin-top: 1rem; }
+    .wrong-item {
+      background: #2a0a10;
+      border-left: 4px solid var(--red);
+      border-radius: 8px;
+      padding: .9rem 1rem;
+      margin-bottom: .8rem;
+      font-size: .9rem;
+    }
+    .wrong-item strong { color: var(--red); }
+    .wrong-item .correct-ans { color: var(--green); margin-top: .3rem; }
+    .restart-btn {
+      background: var(--azure);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: .85rem 2.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 1.5rem;
+    }
+    .restart-btn:hover { background: #005fa3; }
+    .notion-btn {
+      display: inline-block;
+      margin-top: .8rem;
+      margin-left: .6rem;
+      background: #333;
+      color: #ddd;
+      border: 1px solid #555;
+      border-radius: 10px;
+      padding: .8rem 1.8rem;
+      font-size: .95rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>&#x1F6E1;&#xFE0F; AZ-500 Practice Quiz</h1>
+    <p>Microsoft Azure Security Technologies &mdash; 10 Questions</p>
+  </header>
+
+  <div id="quiz-container">
+    <div class="progress-label" id="progress-label">Question 1 of 10</div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progress-bar" style="width:10%"></div>
+    </div>
+    <div class="card" id="question-card">
+      <div class="domain-tag" id="domain-tag"></div>
+      <div class="question-text" id="question-text"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="next-btn" id="next-btn">Next Question &rarr;</button>
+    </div>
+  </div>
+
+  <div id="results">
+    <div class="card">
+      <div class="score-circle">
+        <span class="num" id="score-num">0</span>
+        <span class="denom" id="score-denom">/ 10</span>
+      </div>
+      <h2 id="result-title">Quiz Complete!</h2>
+      <p id="result-msg"></p>
+      <div class="wrong-list" id="wrong-list"></div>
+      <br>
+      <button class="restart-btn" onclick="restartQuiz()">&#x1F504; Restart Quiz</button>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        domain: "Identity & Access",
+        q: "Which Azure service allows you to enforce time-limited, approval-based role activations to reduce standing privileged access?",
+        options: [
+          "Azure AD Conditional Access",
+          "Microsoft Entra Privileged Identity Management (PIM)",
+          "Azure RBAC built-in roles",
+          "Microsoft Defender for Identity"
+        ],
+        answer: 1,
+        explanation: "Microsoft Entra Privileged Identity Management (PIM) enables just-in-time (JIT) privileged access with time-bound activations, approval workflows, and audit logs, minimizing standing admin privileges."
+      },
+      {
+        domain: "Networking",
+        q: "You need to allow traffic between two subnets in the same VNet only on port 443. What is the most appropriate Azure resource to use?",
+        options: [
+          "Azure Firewall Policy",
+          "Network Security Group (NSG)",
+          "Web Application Firewall (WAF)",
+          "Azure DDoS Protection Standard"
+        ],
+        answer: 1,
+        explanation: "Network Security Groups (NSGs) are the standard mechanism to filter traffic between subnets or NICs within a VNet using inbound/outbound security rules based on port, protocol, and source/destination."
+      },
+      {
+        domain: "Defender for Cloud",
+        q: "What metric in Microsoft Defender for Cloud measures your overall security hygiene by assigning points for each resolved recommendation?",
+        options: [
+          "Compliance Score",
+          "Threat Intelligence Score",
+          "Secure Score",
+          "Risk Rating Index"
+        ],
+        answer: 2,
+        explanation: "Secure Score in Microsoft Defender for Cloud is a numeric metric that reflects how well your resources comply with security recommendations. Remediating recommendations increases your score."
+      },
+      {
+        domain: "Storage Security",
+        q: "A developer should read blobs from Azure Blob Storage without exposing long-lived storage account keys. What is the best approach?",
+        options: [
+          "Store keys in an environment variable",
+          "Use a Shared Access Signature (SAS) token with a short expiry",
+          "Grant the developer Owner role on the subscription",
+          "Enable anonymous public access on the container"
+        ],
+        answer: 1,
+        explanation: "A Shared Access Signature (SAS) provides delegated access with granular permissions (read-only), specific resources, and a short expiry window — avoiding exposure of long-lived account keys."
+      },
+      {
+        domain: "Key Vault",
+        q: "Which Key Vault access model lets you grant permissions at the individual key, secret, or certificate level using Azure RBAC?",
+        options: [
+          "Vault Access Policies",
+          "Azure Managed HSM",
+          "Azure Role-Based Access Control (RBAC) for Key Vault",
+          "Shared Access Signature on Key Vault"
+        ],
+        answer: 2,
+        explanation: "Azure RBAC for Key Vault allows fine-grained permission assignments at the data plane level (individual secrets, keys, certificates) using built-in roles like 'Key Vault Secrets User', unlike Vault Access Policies which are broader."
+      },
+      {
+        domain: "Networking",
+        q: "Which Azure service provides Layer 7 DDoS protection and SSL offloading for web applications exposed on the internet?",
+        options: [
+          "Azure Firewall Premium",
+          "Azure Application Gateway with WAF",
+          "Azure Virtual WAN",
+          "Network Watcher"
+        ],
+        answer: 1,
+        explanation: "Azure Application Gateway with the Web Application Firewall (WAF) provides Layer 7 load balancing, SSL termination, and protection against OWASP threats like SQL injection and XSS for internet-facing web apps."
+      },
+      {
+        domain: "Compute Security",
+        q: "Which feature in Microsoft Defender for Servers removes the requirement to open inbound RDP/SSH ports permanently by enabling access on demand?",
+        options: [
+          "Azure Bastion",
+          "Just-in-Time (JIT) VM Access",
+          "Azure Private Endpoint",
+          "Adaptive Application Controls"
+        ],
+        answer: 1,
+        explanation: "Just-in-Time (JIT) VM Access locks down inbound management ports and opens them only for approved requests during a limited time window, reducing exposure to brute-force attacks."
+      },
+      {
+        domain: "Microsoft Sentinel",
+        q: "In Microsoft Sentinel, what are 'Analytics Rules' used for?",
+        options: [
+          "Automating playbook responses to incidents",
+          "Defining data connector schemas",
+          "Detecting threats by running scheduled or real-time queries that generate incidents and alerts",
+          "Configuring Log Analytics workspace retention"
+        ],
+        answer: 2,
+        explanation: "Analytics Rules in Microsoft Sentinel define the logic (KQL queries) that run on collected data to detect suspicious activity, create alerts, and generate incidents for investigation."
+      },
+      {
+        domain: "Identity & Access",
+        q: "What is the purpose of Conditional Access policies in Microsoft Entra ID?",
+        options: [
+          "To rotate service principal secrets automatically",
+          "To enforce access controls like MFA or device compliance based on conditions such as user, location, and app",
+          "To replicate identities to on-premises Active Directory",
+          "To manage RBAC role assignments for Azure subscriptions"
+        ],
+        answer: 1,
+        explanation: "Conditional Access policies act as an if-then engine: if a user tries to access a resource under certain conditions (risky sign-in, unmanaged device, unusual location), then enforce controls like MFA, block access, or require compliant device."
+      },
+      {
+        domain: "Databases",
+        q: "Which Azure SQL feature encrypts sensitive column data at rest AND in transit, ensuring even DBAs cannot see the plaintext values?",
+        options: [
+          "Transparent Data Encryption (TDE)",
+          "Dynamic Data Masking",
+          "Always Encrypted",
+          "Microsoft Entra Authentication"
+        ],
+        answer: 2,
+        explanation: "Always Encrypted ensures column-level encryption where keys never leave the client application. Even Azure SQL service administrators cannot access the plaintext data, unlike TDE (which DBAs can bypass) or Dynamic Data Masking (display-only masking)."
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+    let wrongAnswers = [];
+    let answered = false;
+
+    function loadQuestion() {
+      const q = questions[current];
+      answered = false;
+      document.getElementById('domain-tag').textContent = q.domain;
+      document.getElementById('question-text').textContent = q.q;
+      document.getElementById('progress-label').textContent = `Question ${current + 1} of ${questions.length}`;
+      document.getElementById('progress-bar').style.width = `${((current + 1) / questions.length) * 100}%`;
+      const feedback = document.getElementById('feedback');
+      feedback.className = 'feedback';
+      feedback.textContent = '';
+      document.getElementById('next-btn').classList.remove('show');
+      const optionsDiv = document.getElementById('options');
+      optionsDiv.innerHTML = '';
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = opt;
+        btn.onclick = () => selectAnswer(i);
+        optionsDiv.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(idx) {
+      if (answered) return;
+      answered = true;
+      const q = questions[current];
+      const btns = document.querySelectorAll('.option-btn');
+      btns.forEach(b => b.disabled = true);
+      const feedback = document.getElementById('feedback');
+      if (idx === q.answer) {
+        score++;
+        btns[idx].classList.add('correct');
+        feedback.className = 'feedback correct-fb show';
+        feedback.innerHTML = '&#x2705; <strong>Correct!</strong> ' + q.explanation;
+      } else {
+        btns[idx].classList.add('wrong');
+        btns[q.answer].classList.add('correct');
+        feedback.className = 'feedback wrong-fb show';
+        feedback.innerHTML = '&#x274C; <strong>Incorrect.</strong> ' + q.explanation;
+        wrongAnswers.push({ q: q.q, chosen: q.options[idx], correct: q.options[q.answer], explanation: q.explanation });
+      }
+      document.getElementById('next-btn').classList.add('show');
+    }
+
+    document.getElementById('next-btn').onclick = () => {
+      current++;
+      if (current < questions.length) {
+        loadQuestion();
+      } else {
+        showResults();
+      }
+    };
+
+    function showResults() {
+      document.getElementById('quiz-container').style.display = 'none';
+      const res = document.getElementById('results');
+      res.style.display = 'block';
+      document.getElementById('score-num').textContent = score;
+      document.getElementById('score-denom').textContent = `/ ${questions.length}`;
+      const pct = Math.round((score / questions.length) * 100);
+      document.getElementById('result-title').textContent = pct >= 80 ? '&#x1F3C6; Great work!' : pct >= 60 ? '&#x1F4AA; Keep studying!' : '&#x1F4DA; More practice needed';
+      document.getElementById('result-msg').textContent = `You scored ${score} out of ${questions.length} (${pct}%). ${wrongAnswers.length > 0 ? 'Review the incorrect answers below.' : 'Perfect score!'}`;
+      const wl = document.getElementById('wrong-list');
+      wl.innerHTML = wrongAnswers.length ? '<h3 style="margin-bottom:1rem;color:#e0e0e0;">&#x274C; Incorrect Answers Review</h3>' : '';
+      wrongAnswers.forEach(w => {
+        const div = document.createElement('div');
+        div.className = 'wrong-item';
+        div.innerHTML = `<strong>${w.q}</strong><div style="margin-top:.4rem;color:#aaa">Your answer: ${w.chosen}</div><div class="correct-ans">&#x2705; Correct: ${w.correct}</div><div style="margin-top:.5rem;font-size:.85rem;color:#aaa">${w.explanation}</div>`;
+        wl.appendChild(div);
+      });
+    }
+
+    function restartQuiz() {
+      current = 0; score = 0; wrongAnswers = [];
+      document.getElementById('results').style.display = 'none';
+      document.getElementById('quiz-container').style.display = 'block';
+      loadQuestion();
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>
