@@ -1,535 +1,68 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>AZ-500 Pro Quiz</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-<style>
-:root{
---bg:#080c14;--surface:#0d1420;--card:#111827;--border:#1e2d45;
---azure:#2196f3;--azure2:#0d47a1;--green:#00e5a0;--red:#ff4757;
---amber:#ffa726;--text:#e8edf5;--muted:#4a6080;--mono:'Space Mono',monospace;--sans:'DM Sans',sans-serif;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-
-/* GRID BG */
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>AZ-500 Pro Quiz</title><link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/><style>:root{--bg:#080c14;--card:#111827;--border:#1e2d45;--azure:#2196f3;--green:#00e5a0;--red:#ff4757;--amber:#ffa726;--text:#e8edf5;--muted:#4a6080;--mono:'Space Mono',monospace;--sans:'DM Sans',sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0}body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(33,150,243,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(33,150,243,.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-
 .wrap{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:2rem 1.2rem}
-
-/* HEADER */
-.hdr{text-align:center;padding:2.5rem 0 2rem}
-.hdr-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(33,150,243,.1);border:1px solid rgba(33,150,243,.25);border-radius:99px;padding:.35rem 1rem;font-family:var(--mono);font-size:.7rem;color:var(--azure);letter-spacing:2px;margin-bottom:1.2rem}
-.hdr h1{font-family:var(--mono);font-size:clamp(1.6rem,4vw,2.4rem);font-weight:700;letter-spacing:-1px;line-height:1.1}
-.hdr h1 span{color:var(--azure)}
-.hdr p{color:var(--muted);margin-top:.6rem;font-size:.9rem}
-
-/* STATS BAR */
-.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.5rem}
-.stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:.8rem;text-align:center}
-.stat-val{font-family:var(--mono);font-size:1.3rem;font-weight:700;color:var(--azure)}
-.stat-val.green{color:var(--green)}
-.stat-val.red{color:var(--red)}
-.stat-val.amber{color:var(--amber)}
-.stat-lbl{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:.2rem}
-
-/* TIMER */
-.timer-ring{display:flex;align-items:center;justify-content:center;gap:.5rem;margin-bottom:1rem}
-.ring-wrap{position:relative;width:52px;height:52px}
-.ring-wrap svg{transform:rotate(-90deg)}
-.ring-bg{fill:none;stroke:var(--border);stroke-width:4}
-.ring-fill{fill:none;stroke:var(--azure);stroke-width:4;stroke-linecap:round;stroke-dasharray:138;stroke-dashoffset:0;transition:stroke-dashoffset .9s linear,stroke .3s}
-.ring-fill.warn{stroke:var(--amber)}
-.ring-fill.danger{stroke:var(--red)}
-.ring-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.85rem;font-weight:700}
-.timer-mode-lbl{font-size:.75rem;color:var(--muted);font-family:var(--mono)}
-
-/* PROGRESS */
-.prog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem}
-.prog-lbl{font-family:var(--mono);font-size:.75rem;color:var(--muted)}
-.streak-badge{display:inline-flex;align-items:center;gap:.3rem;background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.25);border-radius:99px;padding:.2rem .7rem;font-family:var(--mono);font-size:.7rem;color:var(--green)}
-.streak-badge.hidden{opacity:0}
-.prog-bar-wrap{background:var(--border);border-radius:99px;height:5px;margin-bottom:1.2rem;overflow:hidden}
-.prog-bar-fill{height:100%;background:linear-gradient(90deg,var(--azure),var(--green));border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1)}
-
-/* CARD */
-.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2rem;margin-bottom:1.2rem;position:relative;overflow:hidden}
-.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--azure),var(--green));opacity:0;transition:opacity .3s}
-.card.active::before{opacity:1}
-
-.domain-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
-.domain-tag{font-family:var(--mono);font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--azure);background:rgba(33,150,243,.1);border:1px solid rgba(33,150,243,.2);border-radius:6px;padding:.25rem .7rem}
-.diff-tag{font-family:var(--mono);font-size:.65rem;padding:.25rem .6rem;border-radius:6px;font-weight:700}
-.diff-easy{color:var(--green);background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.2)}
-.diff-medium{color:var(--amber);background:rgba(255,167,38,.1);border:1px solid rgba(255,167,38,.2)}
-.diff-hard{color:var(--red);background:rgba(255,71,87,.1);border:1px solid rgba(255,71,87,.2)}
-
-.q-text{font-size:1.05rem;line-height:1.7;margin-bottom:1.5rem;font-weight:400}
-.options{display:flex;flex-direction:column;gap:.65rem}
-.opt-btn{background:rgba(30,45,69,.5);border:1.5px solid var(--border);color:var(--text);border-radius:10px;padding:.85rem 1.1rem;font-size:.92rem;font-family:var(--sans);cursor:pointer;text-align:left;transition:all .18s;display:flex;align-items:center;gap:.75rem}
-.opt-letter{font-family:var(--mono);font-size:.72rem;background:var(--border);border-radius:5px;padding:.15rem .4rem;color:var(--muted);min-width:24px;text-align:center;flex-shrink:0;transition:all .18s}
-.opt-btn:hover:not(:disabled){border-color:var(--azure);background:rgba(33,150,243,.08)}
-.opt-btn:hover:not(:disabled) .opt-letter{background:var(--azure);color:#fff}
-.opt-btn.correct{border-color:var(--green);background:rgba(0,229,160,.07);color:var(--green)}
-.opt-btn.correct .opt-letter{background:var(--green);color:#000}
-.opt-btn.wrong{border-color:var(--red);background:rgba(255,71,87,.07);color:var(--red)}
-.opt-btn.wrong .opt-letter{background:var(--red);color:#fff}
-.opt-btn:disabled{cursor:default}
-
-.feedback{margin-top:1.2rem;padding:1rem 1.1rem;border-radius:10px;font-size:.88rem;line-height:1.7;display:none;animation:fadeSlide .3s ease}
-.feedback.show{display:block}
-.feedback.correct-fb{background:rgba(0,229,160,.06);border-left:3px solid var(--green)}
-.feedback.wrong-fb{background:rgba(255,71,87,.06);border-left:3px solid var(--red)}
-@keyframes fadeSlide{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-
-.notion-status{font-family:var(--mono);font-size:.7rem;color:var(--muted);margin-top:.7rem;display:none}
-.notion-status.show{display:block}
-.notion-status.logging{color:var(--amber)}
-.notion-status.logged{color:var(--green)}
-
-.next-btn{margin-top:1.2rem;background:var(--azure);color:#fff;border:none;border-radius:10px;padding:.8rem 2rem;font-size:.95rem;font-weight:600;font-family:var(--sans);cursor:pointer;display:none;transition:background .2s,transform .1s;letter-spacing:.3px}
-.next-btn:hover{background:#1976d2}
-.next-btn:active{transform:scale(.98)}
-.next-btn.show{display:inline-block}
-
-/* DOMAIN ACCURACY */
-.domain-grid{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.5rem}
-.domain-row2{display:flex;align-items:center;gap:.8rem}
-.domain-name{font-size:.78rem;color:var(--muted);width:160px;flex-shrink:0;font-family:var(--mono)}
-.domain-track{flex:1;background:var(--border);border-radius:99px;height:7px;overflow:hidden}
-.domain-fill{height:100%;border-radius:99px;transition:width 1s ease}
-.domain-pct{font-family:var(--mono);font-size:.72rem;width:36px;text-align:right;flex-shrink:0}
-
-/* RESULTS */
-#results{display:none;text-align:center}
-.results-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2.5rem 2rem}
-.score-ring{position:relative;width:140px;height:140px;margin:0 auto 1.5rem}
-.score-ring svg{transform:rotate(-90deg)}
-.score-ring-bg{fill:none;stroke:var(--border);stroke-width:8}
-.score-ring-fill{fill:none;stroke-width:8;stroke-linecap:round;stroke-dasharray:376;stroke-dashoffset:376;transition:stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1) .3s}
-.score-ring-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.score-big{font-family:var(--mono);font-size:2.2rem;font-weight:700}
-.score-tot{font-size:.75rem;color:var(--muted);font-family:var(--mono)}
-#results h2{font-size:1.5rem;margin-bottom:.4rem;font-family:var(--mono)}
-#results .sub{color:var(--muted);font-size:.9rem;margin-bottom:2rem}
-
-.session-history{background:rgba(33,150,243,.05);border:1px solid rgba(33,150,243,.15);border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.5rem;text-align:left}
-.history-title{font-family:var(--mono);font-size:.7rem;color:var(--azure);text-transform:uppercase;letter-spacing:2px;margin-bottom:.8rem}
-.history-dots{display:flex;gap:.4rem;flex-wrap:wrap}
-.h-dot{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.65rem;font-weight:700}
-.h-dot.win{background:rgba(0,229,160,.2);color:var(--green);border:1px solid rgba(0,229,160,.3)}
-.h-dot.loss{background:rgba(255,71,87,.2);color:var(--red);border:1px solid rgba(255,71,87,.3)}
-.h-dot.current{border-width:2px}
-
-.wrong-list{text-align:left;margin-top:1.2rem}
-.wrong-item{background:rgba(255,71,87,.04);border:1px solid rgba(255,71,87,.15);border-radius:10px;padding:1rem 1.1rem;margin-bottom:.7rem;font-size:.86rem}
-.wrong-item .wq{font-weight:600;margin-bottom:.4rem;color:var(--text)}
-.wrong-item .wa{color:var(--red);font-size:.82rem}
-.wrong-item .wc{color:var(--green);font-size:.82rem;margin-top:.2rem}
-.wrong-item .we{color:var(--muted);font-size:.8rem;margin-top:.5rem;line-height:1.6}
-
-.btn-row{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem}
-.btn-primary{background:var(--azure);color:#fff;border:none;border-radius:10px;padding:.8rem 2rem;font-size:.95rem;font-weight:600;font-family:var(--sans);cursor:pointer;transition:background .2s}
-.btn-primary:hover{background:#1976d2}
-.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:10px;padding:.8rem 1.6rem;font-size:.9rem;font-family:var(--sans);cursor:pointer;transition:all .2s}
-.btn-ghost:hover{border-color:var(--azure);color:var(--text)}
-
-/* MODE SELECT */
-#mode-select{text-align:center;padding:1rem 0 2rem}
-#mode-select h2{font-family:var(--mono);font-size:1.2rem;margin-bottom:1.5rem;color:var(--muted)}
-.mode-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}
-.mode-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:1.5rem;cursor:pointer;transition:all .2s;text-align:left}
-.mode-card:hover{border-color:var(--azure);transform:translateY(-2px)}
-.mode-icon{font-size:1.8rem;margin-bottom:.7rem}
-.mode-card h3{font-family:var(--mono);font-size:.9rem;margin-bottom:.4rem}
-.mode-card p{font-size:.8rem;color:var(--muted);line-height:1.5}
-
-@media(max-width:520px){
-.stats-bar{grid-template-columns:repeat(2,1fr)}
-.domain-name{width:110px}
-}
-</style>
-</head>
-<body>
-<div class="wrap">
-
-<header class="hdr">
-  <div class="hdr-badge">&#x1F6E1; AZ-500 &bull; AZURE SECURITY</div>
-  <h1>Pro <span>Quiz</span></h1>
-  <p>Microsoft Azure Security Technologies &mdash; Exam Preparation</p>
-</header>
-
-<!-- MODE SELECT -->
-<div id="mode-select">
-  <h2>// select_mode</h2>
-  <div class="mode-cards">
-    <div class="mode-card" onclick="startQuiz('practice')">
-      <div class="mode-icon">&#x1F4DA;</div>
-      <h3>PRACTICE</h3>
-      <p>Instant feedback after each answer. Explanations shown. Best for learning.</p>
-    </div>
-    <div class="mode-card" onclick="startQuiz('exam')">
-      <div class="mode-icon">&#x23F1;</div>
-      <h3>EXAM SIM</h3>
-      <p>30s timer per question. No feedback until the end. Mirrors real exam pressure.</p>
-    </div>
-    <div class="mode-card" onclick="startQuiz('weak')">
-      <div class="mode-icon">&#x1F3AF;</div>
-      <h3>WEAK SPOTS</h3>
-      <p>Focus on domains where you score below 70%. Spaced repetition style.</p>
-    </div>
-  </div>
+.hdr{text-align:center;padding:2.5rem 0 2rem}.hdr-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(33,150,243,.1);border:1px solid rgba(33,150,243,.25);border-radius:99px;padding:.35rem 1rem;font-family:var(--mono);font-size:.7rem;color:var(--azure);letter-spacing:2px;margin-bottom:1.2rem}
+.hdr h1{font-family:var(--mono);font-size:clamp(1.6rem,4vw,2.4rem);font-weight:700;letter-spacing:-1px}.hdr h1 span{color:var(--azure)}.hdr p{color:var(--muted);margin-top:.6rem;font-size:.9rem}
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.5rem}.stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:.8rem;text-align:center}.stat-val{font-family:var(--mono);font-size:1.3rem;font-weight:700;color:var(--azure)}.stat-val.green{color:var(--green)}.stat-val.red{color:var(--red)}.stat-val.amber{color:var(--amber)}.stat-lbl{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:.2rem}
+.timer-ring{display:flex;align-items:center;justify-content:center;gap:.5rem;margin-bottom:1rem}.ring-wrap{position:relative;width:52px;height:52px}.ring-wrap svg{transform:rotate(-90deg)}.ring-bg{fill:none;stroke:var(--border);stroke-width:4}.ring-fill{fill:none;stroke:var(--azure);stroke-width:4;stroke-linecap:round;stroke-dasharray:138;stroke-dashoffset:0;transition:stroke-dashoffset .9s linear,stroke .3s}.ring-fill.warn{stroke:var(--amber)}.ring-fill.danger{stroke:var(--red)}.ring-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.85rem;font-weight:700}.timer-mode-lbl{font-size:.75rem;color:var(--muted);font-family:var(--mono)}
+.prog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem}.prog-lbl{font-family:var(--mono);font-size:.75rem;color:var(--muted)}.streak-badge{display:inline-flex;align-items:center;gap:.3rem;background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.25);border-radius:99px;padding:.2rem .7rem;font-family:var(--mono);font-size:.7rem;color:var(--green)}.streak-badge.hidden{opacity:0}.prog-bar-wrap{background:var(--border);border-radius:99px;height:5px;margin-bottom:1.2rem;overflow:hidden}.prog-bar-fill{height:100%;background:linear-gradient(90deg,var(--azure),var(--green));border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2rem;margin-bottom:1.2rem;position:relative;overflow:hidden}.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--azure),var(--green));opacity:0;transition:opacity .3s}.card.active::before{opacity:1}
+.domain-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}.domain-tag{font-family:var(--mono);font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--azure);background:rgba(33,150,243,.1);border:1px solid rgba(33,150,243,.2);border-radius:6px;padding:.25rem .7rem}.diff-tag{font-family:var(--mono);font-size:.65rem;padding:.25rem .6rem;border-radius:6px;font-weight:700}.diff-easy{color:var(--green);background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.2)}.diff-medium{color:var(--amber);background:rgba(255,167,38,.1);border:1px solid rgba(255,167,38,.2)}.diff-hard{color:var(--red);background:rgba(255,71,87,.1);border:1px solid rgba(255,71,87,.2)}
+.q-text{font-size:1.05rem;line-height:1.7;margin-bottom:1.5rem}.options{display:flex;flex-direction:column;gap:.65rem}.opt-btn{background:rgba(30,45,69,.5);border:1.5px solid var(--border);color:var(--text);border-radius:10px;padding:.85rem 1.1rem;font-size:.92rem;font-family:var(--sans);cursor:pointer;text-align:left;transition:all .18s;display:flex;align-items:center;gap:.75rem}.opt-letter{font-family:var(--mono);font-size:.72rem;background:var(--border);border-radius:5px;padding:.15rem .4rem;color:var(--muted);min-width:24px;text-align:center;flex-shrink:0;transition:all .18s}.opt-btn:hover:not(:disabled){border-color:var(--azure);background:rgba(33,150,243,.08)}.opt-btn:hover:not(:disabled) .opt-letter{background:var(--azure);color:#fff}.opt-btn.correct{border-color:var(--green);background:rgba(0,229,160,.07);color:var(--green)}.opt-btn.correct .opt-letter{background:var(--green);color:#000}.opt-btn.wrong{border-color:var(--red);background:rgba(255,71,87,.07);color:var(--red)}.opt-btn.wrong .opt-letter{background:var(--red);color:#fff}.opt-btn:disabled{cursor:default}
+.feedback{margin-top:1.2rem;padding:1rem 1.1rem;border-radius:10px;font-size:.88rem;line-height:1.7;display:none;animation:fadeSlide .3s ease}.feedback.show{display:block}.feedback.correct-fb{background:rgba(0,229,160,.06);border-left:3px solid var(--green)}.feedback.wrong-fb{background:rgba(255,71,87,.06);border-left:3px solid var(--red)}@keyframes fadeSlide{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.notion-status{font-family:var(--mono);font-size:.7rem;color:var(--muted);margin-top:.7rem;display:none}.notion-status.show{display:block}.notion-status.logging{color:var(--amber)}.notion-status.logged{color:var(--green)}
+.next-btn{margin-top:1.2rem;background:var(--azure);color:#fff;border:none;border-radius:10px;padding:.8rem 2rem;font-size:.95rem;font-weight:600;font-family:var(--sans);cursor:pointer;display:none;transition:background .2s,transform .1s}.next-btn:hover{background:#1976d2}.next-btn:active{transform:scale(.98)}.next-btn.show{display:inline-block}
+.domain-grid{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.5rem}.domain-row2{display:flex;align-items:center;gap:.8rem}.domain-name{font-size:.75rem;color:var(--muted);width:155px;flex-shrink:0;font-family:var(--mono)}.domain-track{flex:1;background:var(--border);border-radius:99px;height:7px;overflow:hidden}.domain-fill{height:100%;border-radius:99px;transition:width 1s ease}.domain-pct{font-family:var(--mono);font-size:.72rem;width:36px;text-align:right;flex-shrink:0}
+#results{display:none;text-align:center}.results-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2.5rem 2rem}.score-ring{position:relative;width:140px;height:140px;margin:0 auto 1.5rem}.score-ring svg{transform:rotate(-90deg)}.score-ring-bg{fill:none;stroke:var(--border);stroke-width:8}.score-ring-fill{fill:none;stroke-width:8;stroke-linecap:round;stroke-dasharray:376;stroke-dashoffset:376;transition:stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1) .3s}.score-ring-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}.score-big{font-family:var(--mono);font-size:2.2rem;font-weight:700}.score-tot{font-size:.75rem;color:var(--muted);font-family:var(--mono)}#results h2{font-size:1.5rem;margin-bottom:.4rem;font-family:var(--mono)}#results .sub{color:var(--muted);font-size:.9rem;margin-bottom:2rem}
+.session-history{background:rgba(33,150,243,.05);border:1px solid rgba(33,150,243,.15);border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.5rem;text-align:left}.history-title{font-family:var(--mono);font-size:.7rem;color:var(--azure);text-transform:uppercase;letter-spacing:2px;margin-bottom:.8rem}.history-dots{display:flex;gap:.4rem;flex-wrap:wrap}.h-dot{width:32px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.62rem;font-weight:700}.h-dot.win{background:rgba(0,229,160,.2);color:var(--green);border:1px solid rgba(0,229,160,.3)}.h-dot.loss{background:rgba(255,71,87,.2);color:var(--red);border:1px solid rgba(255,71,87,.3)}.h-dot.current{border-width:2px}
+.wrong-list{text-align:left;margin-top:1.2rem}.wrong-item{background:rgba(255,71,87,.04);border:1px solid rgba(255,71,87,.15);border-radius:10px;padding:1rem 1.1rem;margin-bottom:.7rem;font-size:.86rem}.wrong-item .wq{font-weight:600;margin-bottom:.4rem;color:var(--text)}.wrong-item .wa{color:var(--red);font-size:.82rem}.wrong-item .wc{color:var(--green);font-size:.82rem;margin-top:.2rem}.wrong-item .we{color:var(--muted);font-size:.8rem;margin-top:.5rem;line-height:1.6}
+.btn-row{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem}.btn-primary{background:var(--azure);color:#fff;border:none;border-radius:10px;padding:.8rem 2rem;font-size:.95rem;font-weight:600;font-family:var(--sans);cursor:pointer;transition:background .2s}.btn-primary:hover{background:#1976d2}.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:10px;padding:.8rem 1.6rem;font-size:.9rem;font-family:var(--sans);cursor:pointer;transition:all .2s}.btn-ghost:hover{border-color:var(--azure);color:var(--text)}
+#mode-select{text-align:center;padding:1rem 0 2rem}#mode-select h2{font-family:var(--mono);font-size:1rem;margin-bottom:1.2rem;color:var(--muted);letter-spacing:2px}.mode-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem}.mode-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:1.5rem;cursor:pointer;transition:all .2s;text-align:left}.mode-card:hover,.mode-card.selected{border-color:var(--azure);transform:translateY(-2px);background:rgba(33,150,243,.05)}.mode-icon{font-size:1.8rem;margin-bottom:.7rem}.mode-card h3{font-family:var(--mono);font-size:.88rem;margin-bottom:.4rem}.mode-card p{font-size:.8rem;color:var(--muted);line-height:1.5}
+.count-section{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem;text-align:left}.count-label{font-family:var(--mono);font-size:.75rem;color:var(--azure);text-transform:uppercase;letter-spacing:2px;margin-bottom:1rem}.count-pills{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:.8rem}.count-pill{background:rgba(30,45,69,.5);border:1.5px solid var(--border);border-radius:8px;padding:.5rem 1.2rem;font-family:var(--mono);font-size:.82rem;cursor:pointer;transition:all .18s;color:var(--muted)}.count-pill:hover,.count-pill.active{border-color:var(--azure);color:var(--azure);background:rgba(33,150,243,.08)}.count-hint{font-size:.75rem;color:var(--muted);font-family:var(--mono)}
+.start-btn{background:var(--azure);color:#fff;border:none;border-radius:10px;padding:.9rem 2.5rem;font-size:1rem;font-weight:600;font-family:var(--sans);cursor:pointer;transition:background .2s,opacity .2s;width:100%;margin-top:1.2rem}.start-btn:hover:not([disabled]){background:#1976d2}.start-btn[disabled]{opacity:.35;cursor:default}
+@media(max-width:520px){.stats-bar{grid-template-columns:repeat(2,1fr)}.domain-name{width:100px}}</style></head><body><div class="wrap">
+<header class="hdr"><div class="hdr-badge">&#x1F6E1; AZ-500 &bull; AZURE SECURITY</div><h1>Pro <span>Quiz</span></h1><p>Microsoft Azure Security Technologies &mdash; 40 Questions Available</p></header>
+<div id="mode-select"><h2>// SELECT_MODE</h2><div class="mode-cards">
+<div class="mode-card" id="mc-practice" onclick="selectMode('practice')"><div class="mode-icon">&#x1F4DA;</div><h3>PRACTICE</h3><p>Instant feedback &amp; explanations after each answer. Best for learning.</p></div>
+<div class="mode-card" id="mc-exam" onclick="selectMode('exam')"><div class="mode-icon">&#x23F1;</div><h3>EXAM SIM</h3><p>30s timer per question. No feedback until end. Real exam pressure.</p></div>
+<div class="mode-card" id="mc-weak" onclick="selectMode('weak')"><div class="mode-icon">&#x1F3AF;</div><h3>WEAK SPOTS</h3><p>Focuses on domains where your accuracy is below 70%.</p></div>
 </div>
-
-<!-- QUIZ -->
+<div class="count-section"><div class="count-label">// HOW_MANY_QUESTIONS?</div><div class="count-pills">
+<div class="count-pill" onclick="selectCount(5,this)">5</div><div class="count-pill" onclick="selectCount(10,this)">10</div><div class="count-pill active" onclick="selectCount(15,this)">15</div><div class="count-pill" onclick="selectCount(20,this)">20</div><div class="count-pill" onclick="selectCount(30,this)">30</div><div class="count-pill" onclick="selectCount(40,this)">All 40</div>
+</div><div class="count-hint" id="count-hint">15 questions &mdash; ~8 min practice / ~7 min exam</div></div>
+<button class="start-btn" id="start-btn" onclick="startQuiz()" disabled>Select a mode above to start &rarr;</button></div>
 <div id="quiz-container" style="display:none">
-
-  <div class="stats-bar">
-    <div class="stat"><div class="stat-val" id="s-score">0</div><div class="stat-lbl">Score</div></div>
-    <div class="stat"><div class="stat-val green" id="s-correct">0</div><div class="stat-lbl">Correct</div></div>
-    <div class="stat"><div class="stat-val red" id="s-wrong">0</div><div class="stat-lbl">Wrong</div></div>
-    <div class="stat"><div class="stat-val amber" id="s-streak">0</div><div class="stat-lbl">Streak &#x1F525;</div></div>
-  </div>
-
-  <div class="timer-ring" id="timer-row" style="display:none">
-    <div class="ring-wrap">
-      <svg width="52" height="52" viewBox="0 0 52 52">
-        <circle class="ring-bg" cx="26" cy="26" r="22"/>
-        <circle class="ring-fill" id="ring-fill" cx="26" cy="26" r="22"/>
-      </svg>
-      <div class="ring-num" id="ring-num">30</div>
-    </div>
-    <span class="timer-mode-lbl">SEC REMAINING</span>
-  </div>
-
-  <div class="prog-row">
-    <span class="prog-lbl" id="prog-lbl">Q1 / 10</span>
-    <span class="streak-badge hidden" id="streak-badge">&#x26A1; 3 streak</span>
-  </div>
-  <div class="prog-bar-wrap"><div class="prog-bar-fill" id="prog-bar" style="width:10%"></div></div>
-
-  <div class="card active" id="q-card">
-    <div class="domain-row">
-      <span class="domain-tag" id="domain-tag">DOMAIN</span>
-      <span class="diff-tag" id="diff-tag">MED</span>
-    </div>
-    <div class="q-text" id="q-text"></div>
-    <div class="options" id="options"></div>
-    <div class="feedback" id="feedback"></div>
-    <div class="notion-status" id="notion-status"></div>
-    <button class="next-btn" id="next-btn">Next &rarr;</button>
-  </div>
+<div class="stats-bar"><div class="stat"><div class="stat-val" id="s-score">0</div><div class="stat-lbl">Score</div></div><div class="stat"><div class="stat-val green" id="s-correct">0</div><div class="stat-lbl">Correct</div></div><div class="stat"><div class="stat-val red" id="s-wrong">0</div><div class="stat-lbl">Wrong</div></div><div class="stat"><div class="stat-val amber" id="s-streak">0</div><div class="stat-lbl">Streak &#x1F525;</div></div></div>
+<div class="timer-ring" id="timer-row" style="display:none"><div class="ring-wrap"><svg width="52" height="52" viewBox="0 0 52 52"><circle class="ring-bg" cx="26" cy="26" r="22"/><circle class="ring-fill" id="ring-fill" cx="26" cy="26" r="22"/></svg><div class="ring-num" id="ring-num">30</div></div><span class="timer-mode-lbl">SEC REMAINING</span></div>
+<div class="prog-row"><span class="prog-lbl" id="prog-lbl">Q1 / 15</span><span class="streak-badge hidden" id="streak-badge">&#x26A1; streak</span></div>
+<div class="prog-bar-wrap"><div class="prog-bar-fill" id="prog-bar" style="width:0%"></div></div>
+<div class="card active" id="q-card"><div class="domain-row"><span class="domain-tag" id="domain-tag"></span><span class="diff-tag" id="diff-tag"></span></div><div class="q-text" id="q-text"></div><div class="options" id="options"></div><div class="feedback" id="feedback"></div><div class="notion-status" id="notion-status"></div><button class="next-btn" id="next-btn">Next &rarr;</button></div>
 </div>
-
-<!-- RESULTS -->
-<div id="results">
-  <div class="results-card">
-    <div class="score-ring">
-      <svg width="140" height="140" viewBox="0 0 140 140">
-        <circle class="score-ring-bg" cx="70" cy="70" r="60"/>
-        <circle class="score-ring-fill" id="score-ring-fill" cx="70" cy="70" r="60"/>
-      </svg>
-      <div class="score-ring-num">
-        <span class="score-big" id="score-big">0</span>
-        <span class="score-tot" id="score-tot">/10</span>
-      </div>
-    </div>
-    <h2 id="result-title"></h2>
-    <p class="sub" id="result-sub"></p>
-
-    <div class="session-history">
-      <div class="history-title">Session History</div>
-      <div class="history-dots" id="history-dots"></div>
-    </div>
-
-    <div style="margin-bottom:1.5rem">
-      <div style="font-family:var(--mono);font-size:.7rem;color:var(--azure);text-transform:uppercase;letter-spacing:2px;margin-bottom:1rem;text-align:left">Domain Accuracy</div>
-      <div class="domain-grid" id="domain-grid"></div>
-    </div>
-
-    <div class="wrong-list" id="wrong-list"></div>
-
-    <div class="btn-row">
-      <button class="btn-primary" onclick="goMode()">&#x1F504; New Session</button>
-      <button class="btn-ghost" onclick="startQuiz(lastMode)">Retry Same Mode</button>
-    </div>
-  </div>
-</div>
-
-</div><!-- /wrap -->
-
-<script>
-const NOTION_PAGE_ID = '3525535d-cc65-81fc-82bd-dbd36d01bc24';
-const ANTHROPIC_MODEL = 'claude-sonnet-4-20250514';
-
-const ALL_QUESTIONS = [
-  {domain:'Identity & Access',diff:'medium',q:'Which service provides just-in-time, approval-based privileged role activations to reduce standing admin access?',opts:['Azure AD Conditional Access','Microsoft Entra PIM','Azure RBAC built-in roles','Microsoft Defender for Identity'],ans:1,exp:'Microsoft Entra Privileged Identity Management (PIM) enables time-bound role activations with approval workflows and audit logs, eliminating standing admin privileges.'},
-  {domain:'Networking',diff:'easy',q:'You need to filter traffic between two subnets in the same VNet only on port 443. What is the correct resource?',opts:['Azure Firewall Policy','Network Security Group (NSG)','Web Application Firewall (WAF)','Azure DDoS Protection Standard'],ans:1,exp:'NSGs filter traffic at the subnet or NIC level using port/protocol/IP rules — the standard and most cost-effective tool for intra-VNet traffic control.'},
-  {domain:'Defender for Cloud',diff:'easy',q:'What metric in Microsoft Defender for Cloud measures overall security posture by awarding points for resolved recommendations?',opts:['Compliance Score','Threat Intelligence Score','Secure Score','Risk Rating Index'],ans:2,exp:'Secure Score is a numeric indicator that increases as you remediate recommendations, giving you a measurable target for improving your security posture.'},
-  {domain:'Storage Security',diff:'medium',q:'A developer needs read access to Azure Blob Storage without exposing long-lived account keys. Best approach?',opts:['Store keys in environment variable','Use a short-expiry SAS token','Grant Owner role on subscription','Enable anonymous public access'],ans:1,exp:'A Shared Access Signature (SAS) delegates scoped, time-limited access without sharing account keys, following the principle of least privilege.'},
-  {domain:'Key Vault',diff:'medium',q:'Which Key Vault access model allows granting permissions at the individual secret, key, or certificate level via Azure RBAC?',opts:['Vault Access Policies','Azure Managed HSM','Azure RBAC for Key Vault','Shared Access Signature'],ans:2,exp:'Azure RBAC for Key Vault provides data-plane access using built-in roles like "Key Vault Secrets User" — more granular than Vault Access Policies which are broader.'},
-  {domain:'Networking',diff:'medium',q:'Which service provides Layer 7 WAF protection and SSL offloading for internet-facing web apps?',opts:['Azure Firewall Premium','Azure Application Gateway with WAF','Azure Virtual WAN','Network Watcher'],ans:1,exp:'Application Gateway + WAF provides Layer 7 load balancing, SSL termination, and OWASP protection (SQL injection, XSS) specifically for web applications.'},
-  {domain:'Compute Security',diff:'easy',q:'Which Defender for Servers feature removes permanently open RDP/SSH ports by enabling on-demand access only?',opts:['Azure Bastion','Just-in-Time (JIT) VM Access','Azure Private Endpoint','Adaptive Application Controls'],ans:1,exp:'JIT VM Access locks inbound management ports and opens them only for approved, time-bound requests — drastically reducing brute-force attack surface.'},
-  {domain:'Microsoft Sentinel',diff:'hard',q:'In Microsoft Sentinel, what do Analytics Rules do?',opts:['Automate playbook responses to incidents','Define data connector schemas','Detect threats via scheduled KQL queries that generate alerts and incidents','Configure Log Analytics workspace retention'],ans:2,exp:'Analytics Rules run KQL queries (scheduled or near-real-time) against collected data to detect suspicious patterns and generate incidents for investigation.'},
-  {domain:'Identity & Access',diff:'easy',q:'What is the purpose of Conditional Access policies in Microsoft Entra ID?',opts:['Rotate service principal secrets automatically','Enforce access controls like MFA based on conditions: user, location, device, app','Replicate identities to on-premises Active Directory','Manage RBAC role assignments for Azure subscriptions'],ans:1,exp:'Conditional Access is an if-then policy engine: if a user meets certain conditions (risky sign-in, non-compliant device), then enforce controls like MFA or block access.'},
-  {domain:'Databases',diff:'hard',q:'Which Azure SQL feature encrypts column data so that even DBAs with database access cannot see plaintext values?',opts:['Transparent Data Encryption (TDE)','Dynamic Data Masking','Always Encrypted','Microsoft Entra Authentication'],ans:2,exp:'Always Encrypted uses client-side encryption where keys never leave the app. Unlike TDE (which DBAs can bypass at query level) or Dynamic Data Masking (display-only), Always Encrypted ensures true end-to-end column security.'},
-  {domain:'Networking',diff:'hard',q:'You need to inspect TLS-encrypted traffic and apply IDPS signatures on traffic leaving your Azure hub VNet. Which service supports this?',opts:['Azure Application Gateway','Azure DDoS Protection Standard','Azure Firewall Premium','Network Watcher Connection Monitor'],ans:2,exp:'Azure Firewall Premium includes TLS inspection and an intrusion detection and prevention system (IDPS) — capabilities not available in the Standard SKU.'},
-  {domain:'Compute Security',diff:'medium',q:'How do you securely connect to Azure VMs without exposing public IPs or opening RDP/SSH ports to the internet?',opts:['Enable Just-in-Time VM Access only','Use Azure Bastion','Configure a public IP with NSG rules','Use Azure Load Balancer NAT rules'],ans:1,exp:'Azure Bastion is a fully managed PaaS service that provides secure RDP/SSH over TLS directly from the Azure portal, with no public IP on the VM required.'},
-  {domain:'Identity & Access',diff:'hard',q:'A web app needs to read secrets from Key Vault without storing credentials in code. What is the recommended identity approach?',opts:['Create a service principal and store the client secret in app config','Use a system-assigned managed identity on the App Service','Store credentials in Azure Key Vault as a secret (bootstrapping)','Use certificate-based authentication with a self-signed cert'],ans:1,exp:'A system-assigned managed identity eliminates credential management entirely. The App Service gets an identity automatically, which can be granted Key Vault access via RBAC — no secrets in config.'},
-  {domain:'Defender for Cloud',diff:'medium',q:'Which Microsoft Defender for Cloud capability scans Azure VMs for OS vulnerabilities without requiring an agent installation?',opts:['Microsoft Defender for Endpoint integration','Adaptive Application Controls','Agentless scanning in Defender for Servers','Qualys vulnerability scanner'],ans:2,exp:'Agentless scanning in Defender for Servers P2 uses disk snapshots to scan VMs for OS and software vulnerabilities without deploying any agent to the machines.'},
-  {domain:'Microsoft Sentinel',diff:'medium',q:'In Microsoft Sentinel, what triggers a Playbook (Logic App) automatically when a new incident is created?',opts:['Analytics Rules','Data Connectors','Automation Rules','Hunting Queries'],ans:2,exp:'Automation Rules in Sentinel can trigger Logic App playbooks automatically when incidents are created or updated — enabling automated response without manual intervention.'},
-  {domain:'Storage Security',diff:'hard',q:'Which Azure Storage feature prevents data from being deleted or modified for a court-ordered retention period, meeting SEC 17a-4 compliance?',opts:['Soft Delete','Storage Account Lifecycle Policy','Immutable Blob Storage with locked time-based policy','Azure Backup for Storage'],ans:2,exp:'Immutable Blob Storage with a locked time-based retention policy creates WORM (Write Once Read Many) storage. Once locked, even subscription admins cannot delete data, meeting financial compliance requirements like SEC 17a-4.'},
-  {domain:'Key Vault',diff:'easy',q:'What should you implement to ensure Key Vault secrets are automatically rotated before they expire?',opts:['Set a short expiry and manually re-create secrets','Configure Key Vault key rotation policy and Event Grid notifications','Use Azure Policy to enforce secret age','Enable soft delete on the Key Vault'],ans:1,exp:'Key Vault\'s native rotation policy (for keys) and Event Grid-triggered Logic Apps (for secrets) enable automatic credential rotation, reducing the risk of stale or exposed credentials.'},
-  {domain:'Databases',diff:'medium',q:'Which Azure SQL feature masks sensitive data in query results for non-privileged users without actually encrypting it?',opts:['Transparent Data Encryption','Always Encrypted','Dynamic Data Masking','Row-Level Security'],ans:2,exp:'Dynamic Data Masking applies display-level obfuscation to query results (e.g., showing "XXXX" for credit card numbers) for non-privileged users, without storing or encrypting the actual data.'},
-  {domain:'Defender for Cloud',diff:'hard',q:'You want to assess your Azure resources against the CIS Microsoft Azure Foundations Benchmark. Where do you configure this in Defender for Cloud?',opts:['Threat protection plans','Secure Score recommendations blade','Regulatory compliance standards','Workflow automation'],ans:2,exp:'In Defender for Cloud, the Regulatory Compliance blade allows you to add industry standards (like CIS Azure, PCI DSS, NIST) and assess your resources against their controls — giving a gap analysis view.'},
-  {domain:'Networking',diff:'medium',q:'Which service provides a centrally managed hub-and-spoke WAN architecture with built-in security through a secured virtual hub?',opts:['Azure Virtual Network Manager','Azure ExpressRoute','Azure Virtual WAN with Secured Virtual Hub','Azure VPN Gateway'],ans:2,exp:'Azure Virtual WAN with a Secured Virtual Hub (using Azure Firewall) allows you to route and inspect traffic centrally across all connected branch offices and VNets from a single managed hub.'}
-];
-
-let mode='practice', lastMode='practice';
-let qPool=[], current=0, score=0, streak=0, maxStreak=0;
-let wrongAnswers=[], answered=false;
-let timerInterval=null, timeLeft=30;
-let sessionHistory = JSON.parse(localStorage.getItem('az500_history')||'[]');
-let domainStats = JSON.parse(localStorage.getItem('az500_domains')||'{}');
-
-function shuffle(arr){return arr.sort(()=>Math.random()-.5)}
-
-function goMode(){
-  document.getElementById('mode-select').style.display='block';
-  document.getElementById('quiz-container').style.display='none';
-  document.getElementById('results').style.display='none';
-}
-
-function startQuiz(m){
-  mode=m; lastMode=m;
-  current=0; score=0; streak=0; maxStreak=0; wrongAnswers=[]; answered=false;
-  document.getElementById('mode-select').style.display='none';
-  document.getElementById('results').style.display='none';
-  document.getElementById('quiz-container').style.display='block';
-
-  if(m==='weak'){
-    // filter to domains below 70% or all if no data
-    const weakDomains = Object.keys(domainStats).filter(d=>{
-      const s=domainStats[d]; return s && s.total>0 && (s.correct/s.total)<0.7;
-    });
-    qPool = weakDomains.length ? shuffle(ALL_QUESTIONS.filter(q=>weakDomains.includes(q.domain))).slice(0,10) : shuffle([...ALL_QUESTIONS]).slice(0,10);
-  } else {
-    qPool = shuffle([...ALL_QUESTIONS]).slice(0,10);
-  }
-
-  document.getElementById('timer-row').style.display = m==='exam' ? 'flex' : 'none';
-  loadQ();
-}
-
-function loadQ(){
-  if(current >= qPool.length){ showResults(); return; }
-  answered=false;
-  clearInterval(timerInterval);
-  const q=qPool[current];
-  document.getElementById('domain-tag').textContent=q.domain;
-  const dt=document.getElementById('diff-tag');
-  dt.textContent=q.diff.toUpperCase();
-  dt.className='diff-tag diff-'+q.diff;
-  document.getElementById('q-text').textContent=q.q;
-  document.getElementById('prog-lbl').textContent=`Q${current+1} / ${qPool.length}`;
-  document.getElementById('prog-bar').style.width=`${((current+1)/qPool.length)*100}%`;
-  const sb=document.getElementById('streak-badge');
-  if(streak>=3){sb.classList.remove('hidden');sb.textContent=`\u26A1 ${streak} streak`;}else{sb.classList.add('hidden');}
-  const fb=document.getElementById('feedback');
-  fb.className='feedback'; fb.innerHTML='';
-  document.getElementById('notion-status').className='notion-status';
-  document.getElementById('next-btn').classList.remove('show');
-  const opts=document.getElementById('options');
-  opts.innerHTML='';
-  const letters=['A','B','C','D'];
-  q.opts.forEach((opt,i)=>{
-    const btn=document.createElement('button');
-    btn.className='opt-btn';
-    btn.innerHTML=`<span class="opt-letter">${letters[i]}</span>${opt}`;
-    btn.onclick=()=>selectAns(i);
-    opts.appendChild(btn);
-  });
-  updateStats();
-  if(mode==='exam') startTimer();
-}
-
-function startTimer(){
-  timeLeft=30;
-  updateRing();
-  timerInterval=setInterval(()=>{
-    timeLeft--;
-    updateRing();
-    if(timeLeft<=0){clearInterval(timerInterval);autoSelectWrong();}
-  },1000);
-}
-
-function updateRing(){
-  const r=document.getElementById('ring-fill');
-  const n=document.getElementById('ring-num');
-  const pct=timeLeft/30;
-  r.style.strokeDashoffset=138*(1-pct);
-  r.className='ring-fill'+(timeLeft<=10?' danger':timeLeft<=20?' warn':'');
-  n.textContent=timeLeft;
-}
-
-function autoSelectWrong(){
-  if(answered)return;
-  // time's up — mark as wrong, pick a fake wrong answer index
-  const q=qPool[current];
-  answered=true;
-  const btns=document.querySelectorAll('.opt-btn');
-  btns.forEach(b=>b.disabled=true);
-  btns[q.ans].classList.add('correct');
-  streak=0;
-  wrongAnswers.push({q:q.q,chosen:'(Time expired)',correct:q.opts[q.ans],exp:q.exp,domain:q.domain});
-  recordDomain(q.domain,false);
-  if(mode!=='exam'){
-    showFeedback(false,q);
-  }
-  document.getElementById('next-btn').classList.add('show');
-  updateStats();
-}
-
-function selectAns(idx){
-  if(answered)return;
-  clearInterval(timerInterval);
-  answered=true;
-  const q=qPool[current];
-  const btns=document.querySelectorAll('.opt-btn');
-  btns.forEach(b=>b.disabled=true);
-  const correct=idx===q.ans;
-  if(correct){
-    score++; streak++; maxStreak=Math.max(maxStreak,streak);
-    btns[idx].classList.add('correct');
-    recordDomain(q.domain,true);
-  } else {
-    btns[idx].classList.add('wrong');
-    btns[q.ans].classList.add('correct');
-    streak=0;
-    wrongAnswers.push({q:q.q,chosen:q.opts[idx],correct:q.opts[q.ans],exp:q.exp,domain:q.domain});
-    recordDomain(q.domain,false);
-    if(!correct && mode!=='exam') logToNotion(q,q.opts[idx]);
-  }
-  if(mode!=='exam') showFeedback(correct,q);
-  document.getElementById('next-btn').classList.add('show');
-  updateStats();
-}
-
-function showFeedback(correct,q){
-  const fb=document.getElementById('feedback');
-  fb.className='feedback '+(correct?'correct-fb':'wrong-fb')+' show';
-  fb.innerHTML=(correct?'\u2705 <strong>Correct!</strong> ':'\u274C <strong>Incorrect.</strong> ')+q.exp;
-}
-
-function recordDomain(domain,correct){
-  if(!domainStats[domain]) domainStats[domain]={correct:0,total:0};
-  domainStats[domain].total++;
-  if(correct) domainStats[domain].correct++;
-  localStorage.setItem('az500_domains',JSON.stringify(domainStats));
-}
-
-function updateStats(){
-  document.getElementById('s-score').textContent=score;
-  document.getElementById('s-correct').textContent=score;
-  document.getElementById('s-wrong').textContent=wrongAnswers.length;
-  document.getElementById('s-streak').textContent=streak;
-}
-
-async function logToNotion(q,chosenAnswer){
-  const ns=document.getElementById('notion-status');
-  ns.className='notion-status logging show';
-  ns.textContent='\u270F Logging to Notion...';
-  try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:ANTHROPIC_MODEL,
-        max_tokens:1000,
-        system:'You are an AZ-500 tutor. The student got a question wrong. Your task is to call the Notion MCP tool to log the wrong answer to their study page. Log it clearly with the question, what they chose, the correct answer, and a helpful explanation. Use the notion tool to append a block to page_id '+NOTION_PAGE_ID+'. Do it now.',
-        messages:[{role:'user',content:`Log this wrong answer to Notion page ${NOTION_PAGE_ID}:\nQuestion: ${q.q}\nStudent chose: ${chosenAnswer}\nCorrect answer: ${q.opts[q.ans]}\nExplanation: ${q.exp}\nDomain: ${q.domain}`}],
-        mcp_servers:[{type:'url',url:'https://connect.composio.dev/mcp',name:'composio-mcp'}]
-      })
-    });
-    const data=await resp.json();
-    if(data.content && data.content.length){
-      ns.className='notion-status logged show';
-      ns.textContent='\u2713 Logged to Notion: Improve AZ-500';
-    } else throw new Error('no content');
-  } catch(e){
-    ns.className='notion-status show';
-    ns.style.color='var(--muted)';
-    ns.textContent='Notion logging unavailable in this context';
-  }
-}
-
-document.getElementById('next-btn').onclick=()=>{
-  current++;
-  loadQ();
-};
-
-function showResults(){
-  clearInterval(timerInterval);
-  document.getElementById('quiz-container').style.display='none';
-  const r=document.getElementById('results');
-  r.style.display='block';
-
-  const pct=Math.round((score/qPool.length)*100);
-  document.getElementById('score-big').textContent=score;
-  document.getElementById('score-tot').textContent='/'+qPool.length;
-
-  // animate ring
-  setTimeout(()=>{
-    const fill=document.getElementById('score-ring-fill');
-    const color=pct>=80?'var(--green)':pct>=60?'var(--amber)':'var(--red)';
-    fill.style.stroke=color;
-    fill.style.strokeDashoffset=376*(1-pct/100);
-  },100);
-
-  document.getElementById('result-title').textContent=pct>=80?'🏆 Excellent':pct>=60?'💪 Keep Going!':'📚 More Study Needed';
-  document.getElementById('result-sub').textContent=`${pct}% — ${score}/${qPool.length} correct. Max streak: ${maxStreak}.`;
-
-  // session history
-  sessionHistory.push({score,total:qPool.length,pct,date:new Date().toLocaleDateString()});
-  if(sessionHistory.length>10) sessionHistory.shift();
-  localStorage.setItem('az500_history',JSON.stringify(sessionHistory));
-  const hd=document.getElementById('history-dots');
-  hd.innerHTML='';
-  sessionHistory.forEach((s,i)=>{
-    const d=document.createElement('div');
-    d.className='h-dot '+(s.pct>=70?'win':'loss')+(i===sessionHistory.length-1?' current':'');
-    d.textContent=s.pct+'%';
-    d.title=s.date+' — '+s.score+'/'+s.total;
-    hd.appendChild(d);
-  });
-
-  // domain accuracy
-  const dg=document.getElementById('domain-grid');
-  dg.innerHTML='';
-  const domains=[...new Set(ALL_QUESTIONS.map(q=>q.domain))];
-  domains.forEach(d=>{
-    const s=domainStats[d];
-    if(!s || s.total===0) return;
-    const p=Math.round((s.correct/s.total)*100);
-    const color=p>=80?'var(--green)':p>=60?'var(--amber)':'var(--red)';
-    dg.innerHTML+=`<div class="domain-row2"><span class="domain-name">${d}</span><div class="domain-track"><div class="domain-fill" style="width:${p}%;background:${color}"></div></div><span class="domain-pct" style="color:${color}">${p}%</span></div>`;
-  });
-
-  // wrong answers
-  const wl=document.getElementById('wrong-list');
-  wl.innerHTML=wrongAnswers.length?'<div style="font-family:var(--mono);font-size:.7rem;color:var(--red);text-transform:uppercase;letter-spacing:2px;margin-bottom:1rem">\u274C Wrong Answers Review</div>':'';
-  wrongAnswers.forEach(w=>{
-    wl.innerHTML+=`<div class="wrong-item"><div class="wq">${w.q}</div><div class="wa">\u274C You chose: ${w.chosen}</div><div class="wc">\u2705 Correct: ${w.correct}</div><div class="we">${w.exp}</div></div>`;
-  });
-
-  // log all wrong answers to Notion at end in exam mode
-  if(mode==='exam' && wrongAnswers.length){
-    wrongAnswers.forEach(w=>logToNotion({q:w.q,opts:[w.correct],ans:0,exp:w.exp,domain:w.domain},w.chosen));
-  }
-}
-</script>
-</body>
-</html>
+<div id="results"><div class="results-card">
+<div class="score-ring"><svg width="140" height="140" viewBox="0 0 140 140"><circle class="score-ring-bg" cx="70" cy="70" r="60"/><circle class="score-ring-fill" id="score-ring-fill" cx="70" cy="70" r="60"/></svg><div class="score-ring-num"><span class="score-big" id="score-big">0</span><span class="score-tot" id="score-tot">/15</span></div></div>
+<h2 id="result-title"></h2><p class="sub" id="result-sub"></p>
+<div class="session-history"><div class="history-title">Session History</div><div class="history-dots" id="history-dots"></div></div>
+<div style="margin-bottom:1.5rem"><div style="font-family:var(--mono);font-size:.7rem;color:var(--azure);text-transform:uppercase;letter-spacing:2px;margin-bottom:1rem;text-align:left">Domain Accuracy (all-time)</div><div class="domain-grid" id="domain-grid"></div></div>
+<div class="wrong-list" id="wrong-list"></div>
+<div class="btn-row"><button class="btn-primary" onclick="goMode()">&#x1F504; New Session</button><button class="btn-ghost" onclick="retryMode()">Retry Same Mode</button></div>
+</div></div></div><script>const NOTION_PAGE_ID='3525535d-cc65-81fc-82bd-dbd36d01bc24';const ANTHROPIC_MODEL='claude-sonnet-4-20250514';const ALL_Q=[{d:'Identity & Access',diff:'medium',q:'Which service provides just-in-time, approval-based privileged role activations to reduce standing admin access?',o:['Azure AD Conditional Access','Microsoft Entra PIM','Azure RBAC built-in roles','Microsoft Defender for Identity'],a:1,e:'Microsoft Entra PIM enables time-bound role activations with approval workflows and audit logs, eliminating standing admin privileges.'},{d:'Identity & Access',diff:'easy',q:'What is the purpose of Conditional Access policies in Microsoft Entra ID?',o:['Rotate service principal secrets automatically','Enforce controls like MFA based on conditions: user, location, device','Replicate identities to on-premises AD','Manage RBAC role assignments for subscriptions'],a:1,e:'Conditional Access is an if-then engine: if conditions match (risky sign-in, non-compliant device), enforce controls like MFA or block access.'},{d:'Identity & Access',diff:'hard',q:'A web app needs to read Key Vault secrets without storing credentials in code. Best approach?',o:['Create a service principal and store the client secret in config','Use a system-assigned managed identity on the App Service','Store credentials in Key Vault as a bootstrapped secret','Use a self-signed certificate'],a:1,e:'A system-assigned managed identity eliminates credential management entirely. The App Service gets an Azure AD identity automatically, grantable Key Vault access via RBAC with no secrets in config.'},{d:'Identity & Access',diff:'medium',q:'Which Entra ID feature forces re-authentication after a set period or when risk is detected?',o:['Conditional Access sign-in frequency control','PIM role activation duration','Entra ID Protection risk policies','Azure AD B2C user flows'],a:0,e:'Conditional Access sign-in frequency policies force re-authentication after a set period or on elevated risk, reducing the window of compromised session tokens.'},{d:'Identity & Access',diff:'hard',q:'You need external partners to access a SharePoint site without creating accounts in your tenant. Correct feature?',o:['Azure AD B2C','Guest access via Microsoft Entra B2B collaboration','Conditional Access guest policy','Microsoft Entra Verified ID'],a:1,e:'Microsoft Entra B2B allows inviting external users as guests who authenticate with their own identity provider, without provisioning accounts in your tenant.'},{d:'Networking',diff:'easy',q:'You need to filter traffic between two subnets in the same VNet only on port 443. Most appropriate resource?',o:['Azure Firewall Policy','Network Security Group (NSG)','Web Application Firewall (WAF)','Azure DDoS Protection Standard'],a:1,e:'NSGs filter traffic at the subnet or NIC level using port/protocol/IP rules - the standard tool for intra-VNet traffic control.'},{d:'Networking',diff:'medium',q:'Which service provides Layer 7 WAF protection and SSL offloading for internet-facing web apps?',o:['Azure Firewall Premium','Azure Application Gateway with WAF','Azure Virtual WAN','Network Watcher'],a:1,e:'Application Gateway with WAF delivers Layer 7 load balancing, SSL termination, and OWASP protection for web applications.'},{d:'Networking',diff:'hard',q:'You need TLS inspection and IDPS signatures on traffic leaving your Azure hub VNet. Which service?',o:['Azure Application Gateway','Azure DDoS Protection Standard','Azure Firewall Premium','Network Watcher Connection Monitor'],a:2,e:'Azure Firewall Premium includes TLS inspection and an Intrusion Detection and Prevention System (IDPS) not available in the Standard SKU.'},{d:'Networking',diff:'medium',q:'Which service provides a managed hub-and-spoke WAN with a secured virtual hub using Azure Firewall?',o:['Azure Virtual Network Manager','Azure ExpressRoute','Azure Virtual WAN with Secured Virtual Hub','Azure VPN Gateway'],a:2,e:'Azure Virtual WAN with a Secured Virtual Hub routes and inspects traffic centrally across branch offices and VNets from a single managed hub.'},{d:'Networking',diff:'easy',q:'Which feature lets you define custom routes to override default system routes and force traffic through a virtual appliance?',o:['Network Security Groups','User-Defined Routes (UDRs)','Azure Private DNS','Service Endpoints'],a:1,e:'User-Defined Routes (UDRs) override Azure default routing, directing traffic through an NVA, Azure Firewall, or VPN gateway.'},{d:'Networking',diff:'medium',q:'What is the key difference between a Service Endpoint and a Private Endpoint for Azure Storage?',o:['Service Endpoints use a private IP; Private Endpoints use a public IP','Private Endpoints assign a private IP in your VNet; Service Endpoints extend VNet identity to the service public endpoint','They are identical - only naming differs','Service Endpoints only work for Blob; Private Endpoints work for all types'],a:1,e:'Private Endpoints assign a private IP from your VNet to the storage service. Service Endpoints keep the public endpoint but restrict access to specific VNets.'},{d:'Networking',diff:'hard',q:'When should you use Azure DDoS Protection Standard over the free Basic tier?',o:['When you need WAF rules for web apps','When you have public IPs and need adaptive tuning, real-time telemetry, and SLA-backed mitigation','When you need to inspect encrypted traffic','When you need SQL injection protection'],a:1,e:'DDoS Standard adds adaptive tuning, real-time attack metrics, post-attack reports, and an SLA guarantee - critical for production public-facing workloads.'},{d:'Compute Security',diff:'easy',q:'Which Defender for Servers feature removes permanently open RDP/SSH ports by enabling on-demand access only?',o:['Azure Bastion','Just-in-Time (JIT) VM Access','Azure Private Endpoint','Adaptive Application Controls'],a:1,e:'JIT VM Access locks inbound management ports and opens them only for approved, time-bound requests, reducing brute-force attack surface.'},{d:'Compute Security',diff:'medium',q:'How do you securely connect to Azure VMs without exposing public IPs or opening RDP/SSH to the internet?',o:['Enable JIT VM Access only','Use Azure Bastion','Configure public IP with NSG rules','Use Load Balancer NAT rules'],a:1,e:'Azure Bastion provides managed RDP/SSH over TLS from the Azure portal with no public IP on the VM required.'},{d:'Compute Security',diff:'medium',q:'Which Defender for Servers capability scans Azure VMs for OS vulnerabilities without requiring an agent?',o:['Defender for Endpoint integration','Adaptive Application Controls','Agentless scanning in Defender for Servers P2','Qualys add-on'],a:2,e:'Agentless scanning uses disk snapshots to scan VMs for OS and software vulnerabilities without deploying any agent.'},{d:'Compute Security',diff:'hard',q:'You need to ensure only approved applications run on Azure VMs and alert on deviations. Which feature?',o:['Azure Policy guest configuration','Adaptive Application Controls in Defender for Cloud','Azure Security Benchmark','Endpoint DLP'],a:1,e:'Adaptive Application Controls use machine learning to suggest process allowlists per VM group and alert when unlisted processes run.'},{d:'Compute Security',diff:'medium',q:'Which disk encryption option uses BitLocker/DM-Crypt at the VM level with keys stored in your Key Vault?',o:['Server-side encryption with platform-managed keys','Azure Disk Encryption (ADE) with customer-managed keys','Host-based encryption','Confidential disk encryption'],a:1,e:'Azure Disk Encryption (ADE) encrypts VM disks using BitLocker (Windows) or DM-Crypt (Linux), with keys protected in your Key Vault for full customer control.'},{d:'Storage Security',diff:'medium',q:'A developer needs read access to Azure Blob Storage without exposing long-lived account keys. Best approach?',o:['Store keys in environment variable','Use a short-expiry SAS token','Grant Owner role on subscription','Enable anonymous public access'],a:1,e:'A Shared Access Signature (SAS) delegates scoped, time-limited access without sharing account keys, following the principle of least privilege.'},{d:'Storage Security',diff:'hard',q:'Which Azure Storage feature prevents data deletion or modification for a compliance period, meeting SEC 17a-4?',o:['Soft Delete','Storage lifecycle policy','Immutable Blob Storage with locked time-based policy','Azure Backup for Storage'],a:2,e:'Immutable Blob Storage with a locked time-based policy creates WORM storage. Once locked, even subscription admins cannot delete data, meeting SEC 17a-4.'},{d:'Storage Security',diff:'medium',q:'You want to enforce Azure AD-only authentication on a storage account and disable key-based access. What do you configure?',o:['Set a SAS expiry policy','Disable storage account key access','Enable Defender for Storage','Rotate keys every 90 days'],a:1,e:'Disabling key-based access forces clients to authenticate via Azure AD (managed identities, service principals), eliminating shared secret risks.'},{d:'Storage Security',diff:'easy',q:'What Azure feature detects malware uploads to Azure Blob Storage in near real-time?',o:['Azure Policy storage audit','Microsoft Defender for Storage - malware scanning','Azure DLP policy','Storage Analytics logging'],a:1,e:'Microsoft Defender for Storage includes malware scanning that checks uploaded blobs against Microsoft threat intelligence and alerts on malicious files.'},{d:'Key Vault',diff:'medium',q:'Which Key Vault access model allows granting permissions at the individual secret/key/certificate level via Azure RBAC?',o:['Vault Access Policies','Azure Managed HSM','Azure RBAC for Key Vault','Shared Access Signature'],a:2,e:'Azure RBAC for Key Vault provides data-plane access using built-in roles like Key Vault Secrets User - more granular than Vault Access Policies.'},{d:'Key Vault',diff:'easy',q:'What should you implement to ensure Key Vault secrets are automatically rotated before expiry?',o:['Manually re-create secrets on a schedule','Configure rotation policy and Event Grid notifications','Use Azure Policy to enforce secret age','Enable soft delete'],a:1,e:'Key Vault rotation policies (for keys) and Event Grid-triggered automation (for secrets) enable automatic rotation, reducing stale credential risk.'},{d:'Key Vault',diff:'hard',q:'Which Key Vault offering provides a dedicated single-tenant FIPS 140-2 Level 3 HSM cluster?',o:['Standard tier','Premium tier with HSM-protected keys','Managed HSM','Azure Dedicated HSM only'],a:2,e:'Azure Key Vault Managed HSM provides a dedicated, single-tenant FIPS 140-2 Level 3 validated HSM cluster for the highest isolation and compliance requirements.'},{d:'Key Vault',diff:'medium',q:'What Key Vault feature protects against accidental deletion by retaining deleted vaults for a configurable period?',o:['Backup and restore','Soft delete with purge protection','Key rotation policy','Vault firewall rules'],a:1,e:'Soft delete retains deleted Key Vaults and objects for 7-90 days. Purge protection prevents permanent deletion even by admins during the retention window.'},{d:'Databases',diff:'hard',q:'Which Azure SQL feature encrypts columns so even DBAs with database access cannot see plaintext values?',o:['Transparent Data Encryption (TDE)','Dynamic Data Masking','Always Encrypted','Microsoft Entra Authentication'],a:2,e:'Always Encrypted uses client-side encryption where keys never leave the app. Unlike TDE (bypassable by DBAs) or Dynamic Data Masking (display-only), Always Encrypted provides true end-to-end column security.'},{d:'Databases',diff:'medium',q:'Which Azure SQL feature masks data in query results for non-privileged users without encrypting the stored data?',o:['Transparent Data Encryption','Always Encrypted','Dynamic Data Masking','Row-Level Security'],a:2,e:'Dynamic Data Masking applies display-level obfuscation for non-privileged users without changing the actual stored data.'},{d:'Databases',diff:'easy',q:'What does Transparent Data Encryption (TDE) primarily protect against in Azure SQL?',o:['Unauthorized column-level access by app users','Offline access to database files and backups (data at rest)','SQL injection attacks','Privilege escalation via stored procedures'],a:1,e:'TDE encrypts database files, logs, and backups at rest - protecting against offline media theft or unauthorized file-system access.'},{d:'Databases',diff:'medium',q:'Which feature in Azure SQL Database tracks all queries and writes audit logs to Storage, Log Analytics, or Event Hubs?',o:['Advanced Threat Protection','Azure SQL Auditing','Dynamic Data Masking','Defender for SQL'],a:1,e:'Azure SQL Auditing tracks database events and writes them to an audit log for compliance reporting and forensic investigation.'},{d:'Defender for Cloud',diff:'easy',q:'What metric in Microsoft Defender for Cloud measures overall security posture by awarding points for resolved recommendations?',o:['Compliance Score','Threat Intelligence Score','Secure Score','Risk Rating Index'],a:2,e:'Secure Score increases as you remediate recommendations, giving a measurable target for improving security posture.'},{d:'Defender for Cloud',diff:'medium',q:'Which Defender for Cloud blade lets you assess Azure resources against the CIS Azure Foundations Benchmark?',o:['Threat protection plans','Secure Score recommendations','Regulatory Compliance standards blade','Workflow automation'],a:2,e:'The Regulatory Compliance blade lets you add industry standards (CIS Azure, PCI DSS, NIST) and assess resources against their controls.'},{d:'Defender for Cloud',diff:'medium',q:'What is the CSPM component of Defender for Cloud primarily responsible for?',o:['Detecting threats in running workloads','Scanning code repos for IaC misconfigurations','Identifying misconfigurations and providing recommendations to improve posture','Automating incident response playbooks'],a:2,e:'CSPM continuously assesses resource configurations against security best practices and provides prioritized recommendations to reduce your attack surface.'},{d:'Defender for Cloud',diff:'hard',q:'Which Defender for Cloud feature builds a graph of your environment to visually identify attack paths an attacker could chain?',o:['Security alerts correlation','Attack path analysis and Cloud Security Explorer','Adaptive network hardening','File integrity monitoring'],a:1,e:'Attack path analysis maps the cloud resource graph and identifies paths attackers could chain (exposed VM to lateral movement to data exfiltration), enabling proactive remediation.'},{d:'Defender for Cloud',diff:'medium',q:'What does enabling Microsoft Defender for Storage provide beyond basic CSPM recommendations?',o:['Disk encryption management','Threat detection for unusual access, malware scanning, and sensitive data alerts','Automatic key rotation','Network firewall rules'],a:1,e:'Defender for Storage adds threat detection (unusual access patterns, SAS token abuse), malware scanning on uploads, and sensitive data discovery alerts.'},{d:'Microsoft Sentinel',diff:'hard',q:'In Microsoft Sentinel, what do Analytics Rules do?',o:['Automate playbook responses','Define data connector schemas','Detect threats via scheduled KQL queries that generate alerts and incidents','Configure Log Analytics retention'],a:2,e:'Analytics Rules run KQL queries (scheduled or near-real-time) against collected data to detect suspicious patterns and generate incidents.'},{d:'Microsoft Sentinel',diff:'medium',q:'In Microsoft Sentinel, what triggers a Playbook (Logic App) automatically when a new incident is created?',o:['Analytics Rules','Data Connectors','Automation Rules','Hunting Queries'],a:2,e:'Automation Rules trigger Logic App playbooks automatically when incidents are created or updated, enabling automated response.'},{d:'Microsoft Sentinel',diff:'easy',q:'What is the purpose of Data Connectors in Microsoft Sentinel?',o:['Define detection logic for threats','Ingest log data from first and third-party sources into the workspace','Create automated response playbooks','Build dashboards for SOC analysts'],a:1,e:'Data Connectors pipe logs from sources (Azure AD, M365 Defender, CEF/Syslog) into the Log Analytics workspace Sentinel uses for analysis.'},{d:'Microsoft Sentinel',diff:'hard',q:'You want to proactively search for threats that have not yet triggered any alerts. Which Sentinel feature?',o:['Analytics Rules','Workbooks','Hunting Queries','Automation Rules'],a:2,e:'Hunting Queries let analysts proactively search raw logs using KQL to find indicators of compromise that existing Analytics Rules have not yet surfaced.'},{d:'Governance & Compliance',diff:'medium',q:'Which Azure service lets you enforce that all storage accounts in a subscription must have HTTPS-only traffic enabled?',o:['Azure Blueprints','Azure Policy','Management Groups','Azure Advisor'],a:1,e:'Azure Policy evaluates resources against rules and can enforce (deny) or audit non-compliant configurations, including enforcing HTTPS-only on storage accounts.'},{d:'Governance & Compliance',diff:'hard',q:'What is the correct scope hierarchy for Azure Policy inheritance?',o:['Subscription > Resource Group > Resource','Management Group > Subscription > Resource Group > Resource','Resource > Resource Group > Subscription > Management Group','All scopes have equal precedence; last-write wins'],a:1,e:'Azure Policy inheritance flows from Management Group down to Subscription, Resource Group, and Resource. Higher-scope assignments apply unless a lower scope has an explicit exemption.'}];let mode='',lastMode='',chosenCount=15,qPool=[],current=0,score=0,streak=0,maxStreak=0,wrongAnswers=[],answered=false,timerInterval=null,timeLeft=30,sessionHistory=[],domainStats={};
+try{sessionHistory=JSON.parse(localStorage.getItem('az500_h')||'[]');}catch(e){}
+try{domainStats=JSON.parse(localStorage.getItem('az500_d')||'{}');}catch(e){}
+function shuffle(a){return[...a].sort(function(){return Math.random()-.5});}
+function selectMode(m){mode=m;document.querySelectorAll('.mode-card').forEach(function(c){c.classList.remove('selected');});document.getElementById('mc-'+m).classList.add('selected');updateBtn();}
+function selectCount(n,el){chosenCount=n;document.querySelectorAll('.count-pill').forEach(function(p){p.classList.remove('active');});el.classList.add('active');var pm=Math.round(n*0.55),em=Math.round(n*0.5);document.getElementById('count-hint').textContent=n+' questions — ~'+pm+' min practice / ~'+em+' min exam';updateBtn();}
+function updateBtn(){var b=document.getElementById('start-btn');if(mode){b.disabled=false;b.textContent='Start '+chosenCount+' Questions →';}else{b.disabled=true;b.textContent='Select a mode above to start →';}}
+function goMode(){document.getElementById('mode-select').style.display='block';document.getElementById('quiz-container').style.display='none';document.getElementById('results').style.display='none';}
+function retryMode(){startQuiz();}
+function startQuiz(){if(!mode)return;lastMode=mode;current=0;score=0;streak=0;maxStreak=0;wrongAnswers=[];answered=false;document.getElementById('mode-select').style.display='none';document.getElementById('results').style.display='none';document.getElementById('quiz-container').style.display='block';var pool;if(mode==='weak'){var wd=Object.keys(domainStats).filter(function(d){var s=domainStats[d];return s&&s.t>0&&(s.c/s.t)<0.7;});pool=wd.length?shuffle(ALL_Q.filter(function(q){return wd.includes(q.d);})):shuffle(ALL_Q);}else{pool=shuffle(ALL_Q);}qPool=pool.slice(0,Math.min(chosenCount,pool.length));document.getElementById('timer-row').style.display=mode==='exam'?'flex':'none';loadQ();}
+function loadQ(){if(current>=qPool.length){showResults();return;}answered=false;clearInterval(timerInterval);var q=qPool[current];document.getElementById('domain-tag').textContent=q.d;var dt=document.getElementById('diff-tag');dt.textContent=q.diff.toUpperCase();dt.className='diff-tag diff-'+q.diff;document.getElementById('q-text').textContent=q.q;document.getElementById('prog-lbl').textContent='Q'+(current+1)+' / '+qPool.length;document.getElementById('prog-bar').style.width=(((current+1)/qPool.length)*100)+'%';var sb=document.getElementById('streak-badge');if(streak>=3){sb.classList.remove('hidden');sb.textContent='⚡ '+streak+' streak';}else{sb.classList.add('hidden');}var fb=document.getElementById('feedback');fb.className='feedback';fb.innerHTML='';document.getElementById('notion-status').className='notion-status';document.getElementById('next-btn').classList.remove('show');var opts=document.getElementById('options');opts.innerHTML='';['A','B','C','D'].forEach(function(l,i){var b=document.createElement('button');b.className='opt-btn';b.innerHTML='<span class="opt-letter">'+l+'</span>'+q.o[i];b.onclick=function(){selectAns(i);};opts.appendChild(b);});updateStats();if(mode==='exam')startTimer();}
+function startTimer(){timeLeft=30;updateRing();timerInterval=setInterval(function(){timeLeft--;updateRing();if(timeLeft<=0){clearInterval(timerInterval);autoWrong();}},1000);}
+function updateRing(){var r=document.getElementById('ring-fill'),n=document.getElementById('ring-num');r.style.strokeDashoffset=138*(1-timeLeft/30);r.className='ring-fill'+(timeLeft<=10?' danger':timeLeft<=20?' warn':'');n.textContent=timeLeft;}
+function autoWrong(){if(answered)return;answered=true;var q=qPool[current];document.querySelectorAll('.opt-btn').forEach(function(b){b.disabled=true;});document.querySelectorAll('.opt-btn')[q.a].classList.add('correct');streak=0;wrongAnswers.push({q:q.q,chosen:'(Time expired)',correct:q.o[q.a],e:q.e,d:q.d});recD(q.d,false);updateStats();document.getElementById('next-btn').classList.add('show');}
+function selectAns(idx){if(answered)return;clearInterval(timerInterval);answered=true;var q=qPool[current];var btns=document.querySelectorAll('.opt-btn');btns.forEach(function(b){b.disabled=true;});var ok=(idx===q.a);if(ok){score++;streak++;maxStreak=Math.max(maxStreak,streak);btns[idx].classList.add('correct');recD(q.d,true);}else{btns[idx].classList.add('wrong');btns[q.a].classList.add('correct');streak=0;wrongAnswers.push({q:q.q,chosen:q.o[idx],correct:q.o[q.a],e:q.e,d:q.d});recD(q.d,false);if(mode!=='exam')logNotion(q,q.o[idx]);}if(mode!=='exam'){var fb=document.getElementById('feedback');fb.className='feedback '+(ok?'correct-fb':'wrong-fb')+' show';fb.innerHTML=(ok?'✅ <strong>Correct!</strong> ':'❌ <strong>Incorrect.</strong> ')+q.e;}document.getElementById('next-btn').classList.add('show');updateStats();}
+function recD(d,ok){if(!domainStats[d])domainStats[d]={c:0,t:0};domainStats[d].t++;if(ok)domainStats[d].c++;try{localStorage.setItem('az500_d',JSON.stringify(domainStats));}catch(e){}}
+function updateStats(){document.getElementById('s-score').textContent=score;document.getElementById('s-correct').textContent=score;document.getElementById('s-wrong').textContent=wrongAnswers.length;document.getElementById('s-streak').textContent=streak;}
+async function logNotion(q,chosen){var ns=document.getElementById('notion-status');ns.className='notion-status logging show';ns.textContent='✏ Logging to Notion...';try{var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:ANTHROPIC_MODEL,max_tokens:500,system:'You are an AZ-500 tutor. Append a wrong answer block to Notion page '+NOTION_PAGE_ID+' using the Notion MCP tool. Include: question, student answer, correct answer, explanation.',messages:[{role:'user',content:'Log wrong answer. Page: '+NOTION_PAGE_ID+'. Q: '+q.q+'. Chose: '+chosen+'. Correct: '+q.o[q.a]+'. Exp: '+q.e}],mcp_servers:[{type:'url',url:'https://connect.composio.dev/mcp',name:'composio-mcp'}]})});var data=await r.json();if(data.content&&data.content.length){ns.className='notion-status logged show';ns.textContent='✓ Logged to Notion: Improve AZ-500';}else throw 0;}catch(e){ns.className='notion-status show';ns.textContent='(Notion logging unavailable in this context)';}}
+document.getElementById('next-btn').onclick=function(){current++;loadQ();};
+function showResults(){clearInterval(timerInterval);document.getElementById('quiz-container').style.display='none';document.getElementById('results').style.display='block';var pct=Math.round((score/qPool.length)*100);document.getElementById('score-big').textContent=score;document.getElementById('score-tot').textContent='/'+qPool.length;setTimeout(function(){var f=document.getElementById('score-ring-fill');f.style.stroke=pct>=80?'var(--green)':pct>=60?'var(--amber)':'var(--red)';f.style.strokeDashoffset=376*(1-pct/100);},100);var ti=pct>=80?2:pct>=60?1:0;var emojis=['??','??','??'];var labels=['More Study Needed','Keep Going!','Excellent!'];document.getElementById('result-title').textContent=emojis[ti]+' '+labels[ti];document.getElementById('result-sub').textContent=pct+'% — '+score+'/'+qPool.length+' correct. Max streak: '+maxStreak+'.';sessionHistory.push({s:score,t:qPool.length,p:pct,date:new Date().toLocaleDateString()});if(sessionHistory.length>12)sessionHistory.shift();try{localStorage.setItem('az500_h',JSON.stringify(sessionHistory));}catch(e){}var hd=document.getElementById('history-dots');hd.innerHTML='';sessionHistory.forEach(function(s,i){var d=document.createElement('div');d.className='h-dot '+(s.p>=70?'win':'loss')+(i===sessionHistory.length-1?' current':'');d.textContent=s.p+'%';d.title=s.date+' — '+s.s+'/'+s.t;hd.appendChild(d);});var dg=document.getElementById('domain-grid');dg.innerHTML='';var domains=[...new Set(ALL_Q.map(function(q){return q.d;}))];domains.forEach(function(d){var s=domainStats[d];if(!s||s.t===0)return;var p=Math.round((s.c/s.t)*100);var col=p>=80?'var(--green)':p>=60?'var(--amber)':'var(--red)';dg.innerHTML+='<div class="domain-row2"><span class="domain-name">'+d+'</span><div class="domain-track"><div class="domain-fill" style="width:'+p+'%;background:'+col+'"></div></div><span class="domain-pct" style="color:'+col+'">'+p+'%</span></div>';});var wl=document.getElementById('wrong-list');wl.innerHTML=wrongAnswers.length?'<div style="font-family:var(--mono);font-size:.7rem;color:var(--red);text-transform:uppercase;letter-spacing:2px;margin-bottom:1rem">❌ Wrong Answers Review</div>':'';wrongAnswers.forEach(function(w){wl.innerHTML+='<div class="wrong-item"><div class="wq">'+w.q+'</div><div class="wa">❌ You chose: '+w.chosen+'</div><div class="wc">✅ Correct: '+w.correct+'</div><div class="we">'+w.e+'</div></div>';});if(mode==='exam'&&wrongAnswers.length){wrongAnswers.forEach(function(w){logNotion({q:w.q,o:[w.correct],a:0,e:w.e,d:w.d},w.chosen);});}}</script></body></html>
